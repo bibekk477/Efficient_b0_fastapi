@@ -4,3 +4,7 @@ pillow
 torch
 torchvision
 numpy
+python-multipart
+gradio
+requests
+matplotlib
