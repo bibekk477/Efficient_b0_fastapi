@@ -8,7 +8,7 @@ import io
 import requests
 import os
 
-# -------------------- Configuration --------------------
+# Configuration
 MODEL_PATH = os.environ.get("MODEL_PATH", "efficientnet_imagenet100.pth")
 CLASS_NAMES_PATH = os.environ.get("CLASS_NAMES_PATH", "class_names.txt")
 
@@ -48,7 +48,7 @@ def predict_core(tensor: torch.Tensor):
     return class_names[class_names_idx[predicted.item()]], confidence.item()
 
 
-# -------------------- API endpoint --------------------
+#  API endpoint
 @app.post("/predict")
 async def predict_api(file: UploadFile = File(...)):
     image = Image.open(file.file).convert("RGB")
@@ -60,7 +60,7 @@ async def predict_api(file: UploadFile = File(...)):
     }
 
 
-# -------------------- Gradio wrapper (calls internal function, not HTTP) --------------------
+#  Gradio UI
 
 
 def predict_via_python(image: Image.Image):
@@ -72,9 +72,6 @@ def predict_via_python(image: Image.Image):
         return f"Error: {str(e)}"
 
 
-# -------------------- Gradio Interface --------------------
-
-
 gr_interface = gr.Interface(
     fn=predict_via_python,
     inputs=gr.Image(type="pil"),
@@ -84,7 +81,7 @@ gr_interface = gr.Interface(
 )
 
 
-# mount gradio app inside FastAPI (keeps fastapi_app variable intact)
+# mount gradio app inside FastAPI
 app = gr.mount_gradio_app(app, gr_interface, path="/gradio")
 
 
