@@ -1,18 +1,23 @@
 import torch
-from torchvision import models
 import torch.nn as nn
+from torchvision import models
 
 
-def load_model(model_path=None, NUM_CLASSES=None):
+def load_model(model_path, num_classes, device):
     """
-    Load EfficientNet B0 with custom classifier for NUM_CLASSES
+    Load EfficientNet B0 with a custom classifier.
     """
+    # Create model with no pretrained weights
     model = models.efficientnet_b0(weights=None)
 
-    # Replace classifier for your dataset
-    model.classifier[1] = nn.Linear(model.classifier[1].in_features, NUM_CLASSES)
+    # Replace classifier layer
+    model.classifier[1] = nn.Linear(
+        in_features=model.classifier[1].in_features, out_features=num_classes
+    )
 
-    # Load the trained weights
-    model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
+    # Load trained weights
+    state = torch.load(model_path, map_location="cpu")
+    model.load_state_dict(state)
+
     model.eval()
-    return model
+    return model.to(device)
