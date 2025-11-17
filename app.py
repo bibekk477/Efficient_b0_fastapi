@@ -12,6 +12,10 @@ import os
 MODEL_PATH = os.environ.get("MODEL_PATH", "efficientnet_imagenet100.pth")
 CLASS_NAMES_PATH = os.environ.get("CLASS_NAMES_PATH", "class_names.txt")
 
+# gradio config
+GRADIO_HOST = os.environ.get("GRADIO_SERVER_NAME", "0.0.0.0")
+GRADIO_PORT = int(os.environ.get("GRADIO_SERVER_PORT", 7860))
+
 #  FastAPI app
 app = FastAPI(title="EfficientNet Image Classifier")
 
@@ -82,7 +86,9 @@ gr_interface = gr.Interface(
 
 
 # mount gradio app inside FastAPI
-app = gr.mount_gradio_app(app, gr_interface, path="/gradio")
+app = gr.mount_gradio_app(
+    app, gr_interface, path="/gradio", server_name=GRADIO_HOST, server_port=GRADIO_PORT
+)
 
 
 # Root route
